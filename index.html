@@ -342,6 +342,8 @@ body {
   <div class="tabs">
     <a href="#home" class="tab active">overview.py</a>
     <a href="#projects" class="tab">projects.py</a>
+    <a href="#experience" class="tab">experience.sh</a>
+    <a href="#skills" class="tab">tech_stack.yml</a>
     <a href="#contact" class="tab">contact.json</a>
   </div>
   <div class="topbar-right">
@@ -686,7 +688,7 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       
-      // 1. Reveal Elements (Cards, Text)
+      // 1. Reveal Elements
       if(entry.target.classList.contains('reveal') || entry.target.classList.contains('section')) {
         entry.target.classList.add('active');
       }
@@ -740,33 +742,49 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, observerOptions);
 
-// Observe individual cards, headers, and sections
 document.querySelectorAll('.reveal, section[id]').forEach(el => observer.observe(el));
 
-// Correct Mobile & Desktop Scroll Listeners for Active Tabs
+// Scroll Listeners for Active Tabs
 const mainEl = document.getElementById('main-scroll');
 const sections = document.querySelectorAll('section[id]');
 const indexLinks = document.querySelectorAll('.index-list a');
+const topTabs = document.querySelectorAll('.tab');
 
 function handleScrollNav() {
   let current = '';
-  // On mobile, the window scrolls. On desktop, mainEl scrolls.
   const isMobile = window.innerWidth <= 768;
   const scrollPos = isMobile ? window.scrollY : mainEl.scrollTop;
   
   sections.forEach(s => {
-    // Mobile sticky header takes up 50px, so we adjust the trigger offset
     const offset = isMobile ? s.offsetTop - 100 : s.offsetTop;
-    if (scrollPos + 200 >= offset) current = s.id;
+    if (scrollPos + 300 >= offset) current = s.id;
   });
   
+  // Update Right Sidebar Nav
   indexLinks.forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+
+  // Update Top Tabs Nav (Exact 1:1 Match)
+  topTabs.forEach(t => {
+    if (current) {
+       t.classList.toggle('active', t.getAttribute('href') === '#' + current);
+       
+       // Optional: Auto-scroll the top tab container horizontally on mobile to keep the active tab visible
+       if (isMobile && t.classList.contains('active')) {
+         const topbar = document.querySelector('.topbar');
+         topbar.scrollTo({
+            left: t.offsetLeft - 20,
+            behavior: 'smooth'
+         });
+       }
+    }
   });
 }
 
 if (mainEl) mainEl.addEventListener('scroll', handleScrollNav);
 window.addEventListener('scroll', handleScrollNav);
+handleScrollNav();
 
 // Tab clicks
 document.querySelectorAll('.tab').forEach(tab => {
