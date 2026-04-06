@@ -80,6 +80,7 @@ body {
   display: flex; align-items: center; padding: 0 1.5rem; font-family: var(--font-sans);
   font-size: 0.85rem; font-weight: 500; color: var(--text-muted); border-right: 1px solid var(--border-light);
   cursor: pointer; text-decoration: none; transition: all 0.3s ease; position: relative; background: var(--bg-alt);
+  white-space: nowrap;
 }
 .tab:hover { color: var(--text-head); background: var(--bg-panel); }
 .tab.active { color: var(--text-head); background: var(--bg-panel); font-weight: 600; }
@@ -91,9 +92,9 @@ body {
   display: flex; align-items: center; gap: 1.5rem; padding: 0 1.5rem; margin-left: auto;
   border-left: 1px solid var(--border-light); background: var(--bg-panel);
 }
-.status-badge { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-sans); font-size: 0.8rem; color: var(--text-head); font-weight: 600; }
-.status-dot { width: 8px; height: 8px; background: var(--status-dot); border-radius: 50%; animation: pulseGlow 2s infinite; }
-.topbar-meta { font-family: var(--font-sans); font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+.status-badge { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-sans); font-size: 0.8rem; color: var(--text-head); font-weight: 600; white-space: nowrap; }
+.status-dot { width: 8px; height: 8px; background: var(--status-dot); border-radius: 50%; animation: pulseGlow 2s infinite; flex-shrink: 0; }
+.topbar-meta { font-family: var(--font-sans); font-size: 0.8rem; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
 #live-time { color: var(--text-head); font-weight: 600; }
 
 /* ── LAYOUT ── */
@@ -114,7 +115,7 @@ body {
   transition: transform 0.3s ease;
 }
 .avatar:hover { transform: scale(1.05) rotate(-5deg); border-color: var(--accent); }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .profile-name { font-size: 1.1rem; font-family: var(--font-sans); font-weight: 800; color: var(--text-head); letter-spacing: -0.02em; }
 .profile-title { font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-top: 0.2rem; }
 .profile-bio { font-size: 0.9rem; font-family: var(--font-sans); color: var(--text-body); line-height: 1.6; font-weight: 500; animation: fadeUp 0.6s ease-out 0.2s both; }
@@ -273,20 +274,58 @@ body {
 }
 .statusbar-left, .statusbar-right { display: flex; align-items: center; gap: 1.5rem; }
 
-/* Responsive */
-@media (max-width: 1200px) { .index-panel { display: none; } }
+/* ── MOBILE RESPONSIVE DESIGN ── */
+@media (max-width: 1200px) {
+  .index-panel { display: none; }
+}
 @media (max-width: 900px) {
-  .sidebar { width: 280px; } .line-numbers { display: none; } .main-content { padding: 3rem 2.5rem; }
-  .skills-cols, .contact-grid { grid-template-columns: 1fr; } .project-card { grid-template-columns: 1fr; gap: 1rem; }
-  .project-right { align-items: flex-start; flex-direction: row; justify-content: space-between; width: 100%; }
+  .sidebar { width: 260px; }
+  .line-numbers { display: none; }
+  .main-content { padding: 3rem 2rem; }
+  .skills-cols, .contact-grid { grid-template-columns: 1fr; }
+  .project-card { grid-template-columns: 1fr; gap: 1.5rem; }
+  .project-right { align-items: flex-start; flex-direction: column; gap: 1rem; width: 100%; }
+  .project-metrics-col { flex-direction: row; flex-wrap: wrap; }
 }
 @media (max-width: 768px) {
-  .layout { flex-direction: column; overflow: auto; }
-  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-light); }
-  .main { overflow: visible; } .hero-title { font-size: 3rem; }
-  .exp-item { grid-template-columns: 1fr; gap: 0.5rem; } .exp-body { border-left: none; padding-left: 0; }
-  .exp-body::before { display: none; } .stats-row { flex-direction: column; gap: 1.5rem; }
-  .stat { border-left: none; border-top: 3px solid var(--accent); padding-left: 0; padding-top: 0.5rem;}
+  /* Scroll the entire layout container on mobile */
+  .layout { flex-direction: column; overflow-y: auto; display: block; }
+  
+  /* Let sidebar stack naturally */
+  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-light); padding: 2rem 1.5rem; overflow: visible; display: flex; }
+  .main { overflow: visible; display: block; }
+  .main-content { padding: 2rem 1.25rem 4rem 1.25rem; background-size: 16px 16px; }
+
+  /* Topbar Swipeable Fix */
+  .topbar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: flex-start; }
+  .topbar::-webkit-scrollbar { display: none; }
+  .topbar-brand { min-width: auto; padding-right: 1.5rem; }
+  .topbar-right { display: none; } /* Hide desktop status on mobile topbar to leave room for tabs */
+
+  /* Typography & Spacing */
+  .hero { margin-bottom: 4rem; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-sub { font-size: 1rem; margin-bottom: 2rem; }
+  .section { margin-bottom: 4rem; }
+  .section-heading { font-size: 1.75rem; }
+
+  /* Stat rows stack */
+  .stats-row { flex-direction: column; gap: 1.25rem; width: 100%; }
+  .stat { border-left: 3px solid var(--accent); border-top: none; padding-left: 1rem; padding-top: 0; }
+
+  /* Experience items stack */
+  .exp-list { gap: 2rem; }
+  .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+  .exp-body { border-left: none; padding-left: 0; }
+  .exp-body::before { display: none; }
+  .exp-points li { padding-left: 1.25rem; font-size: 0.95rem; }
+
+  /* Shrink padding inside cards */
+  .project-card, .skill-block, .contact-card { padding: 1.5rem; }
+
+  /* Bottom status bar */
+  .statusbar { justify-content: center; font-size: 0.75rem; }
+  .statusbar-right { display: none; }
 }
 </style>
 </head>
@@ -294,7 +333,7 @@ body {
 
 <!-- TOP TAB BAR -->
 <div class="topbar">
-  <div class="topbar-brand">Ray Zhao // MLE</div>
+  <div class="topbar-brand">Ray Zhao</div>
   <div class="tabs">
     <a href="#home" class="tab active">overview.py</a>
     <a href="#projects" class="tab">projects.py</a>
@@ -317,8 +356,8 @@ body {
   <aside class="sidebar">
     <div class="profile-wrap">
       <div class="avatar">
-        <!-- TO ADD YOUR PHOTO: replace the emoji with <img src="photo.jpg" alt="Ray Zhao"> -->
-        ⚡
+        <!-- Image pic -->
+        <img src="assets/photo.jpg" alt="Ray Zhao">
       </div>
       <div>
         <div class="profile-name">Ray Zhao</div>
@@ -327,21 +366,21 @@ body {
     </div>
 
     <div class="profile-bio">
-      Building RAG pipelines, LLM agents & production ML systems that ship to real users.
+      I turn cutting-edge ML research into scalable production systems
+      Fight on! ✌🏼
     </div>
 
     <div class="divider"></div>
 
     <ul class="meta">
-      <li><span class="meta-icon">⌘</span> 4+ projects shipped</li>
-      <li><span class="meta-icon">⚲</span> Los Angeles, USA</li>
-      <li><span class="meta-icon">🎓</span> USC CS '25</li>
-      <li><span class="meta-icon">✉</span> <a href="mailto:your@email.com">your@email.com</a></li>
+      <li><span class="meta-icon">📍</span> Los Angeles, USA</li>
+      <li><span class="meta-icon">🎓</span> University of Southern California, ECE, '25 Fall</li>
+      <li><span class="meta-icon">📧</span> rayzh27@gmail.com</a></li>
     </ul>
 
     <div class="btn-group">
-      <a href="resume.pdf" class="btn btn-primary" download>Download CV ↓</a>
-      <a href="https://upwork.com" target="_blank" class="btn btn-ghost">Hire me on Upwork</a>
+      <!-- <a href="resume.pdf" class="btn btn-primary" download>Download CV ↓</a> -->
+      <a href="https://www.upwork.com/freelancers/~0117d0a6e40807eb28?mp_source=share" target="_blank" class="btn btn-ghost">Hire me on Upwork</a>
       <a href="#contact" class="btn btn-ghost">Work with me →</a>
     </div>
   </aside>
@@ -364,9 +403,16 @@ body {
             <span class="dim">Engineer</span>
           </h1>
           <p class="hero-sub">
-            As a data-centric engineer, I build production ML systems — RAG pipelines, LLM agents, and recommendation engines that transform raw data into highly functional, meaningful interactions.
+            I build models from scratch, PyTorch, transformers,
+            and Optimization, and train models at scale on cloud
+            infrastructure. From there I apply that to RAG systems,
+            LLM agents, and AWS deployments, etc.
           </p>
           <div class="stats-row">
+            <div class="stat">
+              <span class="stat-val counter" data-target="5.1" data-suffix="M params">0</span>
+              <span class="stat-key">Model Parameters</span>
+            </div>
             <div class="stat">
               <span class="stat-val counter" data-target="28" data-suffix="×">0</span>
               <span class="stat-key">Retrieval Speedup</span>
@@ -374,10 +420,6 @@ body {
             <div class="stat">
               <span class="stat-val counter" data-target="10" data-suffix="K+">0</span>
               <span class="stat-key">Listings Served</span>
-            </div>
-            <div class="stat">
-              <span class="stat-val counter" data-target="300" data-prefix="&lt;" data-suffix="ms">0</span>
-              <span class="stat-key">API Latency</span>
             </div>
           </div>
         </section>
@@ -387,6 +429,43 @@ body {
           <div class="code-comment typewriter" data-text="# Production Architectures"></div>
           <h2 class="section-heading">Latest Work</h2>
           <div class="project-list">
+
+            <div class="project-card">
+              <div class="project-left">
+                <div class="project-name">ML Training Agent -In Development</div>
+                <div class="project-desc">An LLM-powered agent that automates hyperparameter search
+                  across ML workflows. Runs smoke tests automatically, feeds
+                  results to an LLM, and recommends the next config to try —
+                  cutting trial time from hours to minutes.</div>
+                <div class="project-chips">
+                  <span class="chip">Anthropic SDK</span><span class="chip">Pytorch</span><span class="chip">Pydantic</span><span class="chip">Python</span>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2026</span>
+                <div class="project-metrics-col">
+                  <span class="metric-badge">Auto fine-tuning LLM agent</span>
+                  <span class="metric-badge">In development</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-left">
+                <div class="project-name">BERT4Rec Sequential Recommendation</div>
+                <div class="project-desc">Reproduced BERT4Rec from scratch in PyTorch with full pipeline — BERT-style masking, pre-LayerNorm transformers, AdamW with linear warmup cosine decay. Exceeded original paper benchmarks on 1M MovieLens.</div>
+                <div class="project-chips">
+                  <span class="chip">PyTorch</span><span class="chip">FastAPI</span><span class="chip">MovieLens 1M</span><span class="chip">H100 GPU</span>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2026</span>
+                <div class="project-metrics-col">
+                  <span class="metric-badge">Beat benchmarks</span>
+                  <span class="metric-badge">16hr → 10min</span>
+                </div>
+              </div>
+            </div>
 
             <div class="project-card">
               <div class="project-left">
@@ -401,23 +480,6 @@ body {
                 <div class="project-metrics-col">
                   <span class="metric-badge">F1: 65% → 84%</span>
                   <span class="metric-badge">285ms → 10ms</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="project-card">
-              <div class="project-left">
-                <div class="project-name">BERT4Rec Sequential Recommendation</div>
-                <div class="project-desc">Reproduced BERT4Rec from scratch in PyTorch with full pipeline — BERT-style masking, pre-LayerNorm transformers, AdamW with linear warmup cosine decay. Exceeded original paper benchmarks on 1M MovieLens.</div>
-                <div class="project-chips">
-                  <span class="chip">PyTorch</span><span class="chip">FastAPI</span><span class="chip">MovieLens 1M</span><span class="chip">H100</span>
-                </div>
-              </div>
-              <div class="project-right">
-                <span class="project-year">2025</span>
-                <div class="project-metrics-col">
-                  <span class="metric-badge">Beat benchmarks</span>
-                  <span class="metric-badge">16hr → 10min</span>
                 </div>
               </div>
             </div>
@@ -444,21 +506,25 @@ body {
 
         <!-- EXPERIENCE -->
         <section class="section reveal" id="experience">
-          <div class="code-comment typewriter" data-text="# Professional Career History"></div>
+          <div class="code-comment typewriter" data-text="# Professional History"></div>
           <h2 class="section-heading">Experience</h2>
           <div class="exp-list">
+
             <div class="exp-item">
-              <div class="exp-date">Oct 2025 — Dec 2025</div>
+              <div class="exp-date">Feb 2026 — Present</div>
               <div class="exp-body">
-                <div class="exp-role">ML Engineer — Capstone Project Lead</div>
-                <div class="exp-company">University of Southern California</div>
+                <div class="exp-role">Independent Machine Learning Engineer</div>
+                <div class="exp-company">Inference Flow AI Studio</div>
                 <ul class="exp-points">
-                  <li>Built and deployed end-to-end job recommendation platform aggregating 10K+ listings via REST API.</li>
-                  <li>Deployed ML inference stack on AWS EC2 achieving &lt;300ms latency; automated daily sync via AWS Lambda.</li>
-                  <li>Normalization pipeline reduced ingestion errors 95%, ensuring data integrity across S3/DynamoDB.</li>
+                  <li>Researching and building ML systems independently —
+                    currently developing a hyperparameter tuning agent
+                    with self-correcting search strategies</li>
+                  <li>Reading recent papers, prototyping ideas, and exploring
+                    applied ML problems across LLMs and recommendation systems</li>
                 </ul>
               </div>
             </div>
+
             <div class="exp-item">
               <div class="exp-date">Jan 2025 — Dec 2025</div>
               <div class="exp-body">
@@ -470,6 +536,31 @@ body {
                 </ul>
               </div>
             </div>
+
+            <div class="exp-item">
+              <div class="exp-date">Aug 2023 — Dec 2025</div>
+              <div class="exp-body">
+                <div class="exp-role">M.S. Electrical & Computer Science</div>
+                <div class="exp-company">University of Southern California</div>
+                <ul class="exp-points">
+                  <li>Relevant coursework: Machine Learning, Deep Learning, Probability & Statistics, Algorithms, Linear Algebra</li>
+                  <li>Focused on applied ML — training models, optimization, and building end-to-end systems</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="exp-item">
+              <div class="exp-date">Sep 2019 — June 2023</div>
+              <div class="exp-body">
+                <div class="exp-role">B.E. Computer Science</div>
+                <div class="exp-company">Hangzhou Dianzi Univeristy</div>
+                <ul class="exp-points">
+                  <li>Relevant coursework: Data Structures, Algorithms,
+                    Linear Algebra, Probability & Statistics, Object-Oriented Programming (C++), Computer Networks, Operating Systems</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -510,21 +601,21 @@ body {
           <div class="code-comment typewriter" data-text="# Open Connection Stream"></div>
           <h2 class="section-heading">Contact Me</h2>
           <div class="contact-grid">
-            <a href="mailto:your@email.com" class="contact-card">
+            <a href="mailto: rayzh27@gmail.com" class="contact-card">
               <div class="contact-card-label">Email</div>
-              <div class="contact-card-val">your@email.com</div>
+              <div class="contact-card-val">Open to opportunities.</div>
             </a>
-            <a href="https://github.com/yourusername" target="_blank" class="contact-card">
+            <a href="https://github.com/rayzhao27" target="_blank" class="contact-card">
               <div class="contact-card-label">GitHub</div>
-              <div class="contact-card-val">github.com/yourusername</div>
+              <div class="contact-card-val">Sharing ideas.</div>
             </a>
-            <a href="https://linkedin.com/in/yourusername" target="_blank" class="contact-card">
+            <a href="https://www.linkedin.com/in/ray-zhao-0a787828b/" target="_blank" class="contact-card">
               <div class="contact-card-label">LinkedIn</div>
-              <div class="contact-card-val">linkedin.com/in/yourusername</div>
+              <div class="contact-card-val">Happy to get Connect :)</div>
             </a>
-            <a href="https://upwork.com" target="_blank" class="contact-card">
+            <a href="https://www.upwork.com/freelancers/~0117d0a6e40807eb28?mp_source=share" target="_blank" class="contact-card">
               <div class="contact-card-label">Upwork</div>
-              <div class="contact-card-val">Available for freelance</div>
+              <div class="contact-card-val">Available for freelance.</div>
             </a>
           </div>
         </section>
@@ -549,7 +640,7 @@ body {
 <!-- BOTTOM STATUS BAR -->
 <div class="statusbar">
   <div class="statusbar-left">
-    <span>Build passing: 4 projects delivered</span>
+    <span>Build passing: projects delivering ...</span>
   </div>
   <div class="statusbar-right">
     <span>UTF-8</span>
@@ -589,7 +680,8 @@ const indexLinks = document.querySelectorAll('.index-list a');
 const mainEl = document.getElementById('main-scroll');
 
 // Intersection Observer for scroll animations (Reveals, Typing, Counters)
-const observerOptions = { root: mainEl, rootMargin: '0px', threshold: 0.15 };
+// Changed root to null so it watches the viewport properly on mobile
+const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -613,8 +705,11 @@ const observer = new IntersectionObserver((entries) => {
           const progress = Math.min(elapsed / duration, 1);
           // Ease out effect
           const easeProgress = 1 - Math.pow(1 - progress, 3);
-          const currentVal = Math.floor(easeProgress * target);
+          const currentVal = progress === 1 && !Number.isInteger(target) 
+            ? target 
+            : Math.floor(easeProgress * target);
           counter.textContent = prefix + currentVal + suffix;
+          
           if (progress < 1) { requestAnimationFrame(updateCounter); }
           else { counter.textContent = prefix + target + suffix; }
         }
